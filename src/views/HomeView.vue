@@ -61,11 +61,13 @@ export default {
   methods: {
     async login() {
       await axios
-        .post("http://localhost:8084/users", this.postLogin)
+        .post("users", this.postLogin)
         .then(async (result) => {
           if (result) {
             const authToken = result.data.res.token;
+            const name = result.data.res.name;
             window.localStorage.setItem("authToken", authToken);
+            window.localStorage.setItem("nameUser", name);
             this.$router.push("/dashboard");
           }
         });

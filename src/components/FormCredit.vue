@@ -221,7 +221,7 @@ export default {
   },
   methods: {
     async getClients() {
-      let data = await axios.get("clients");
+      let data = await axios.get("api/clients");
       this.items = await data.data.clients;
     },
     close() {
@@ -274,7 +274,7 @@ export default {
     },
     async saveCredit() {
       await axios
-        .post("credits", this.postCredit)
+        .post("api/credits", this.postCredit)
         .then(async (result) => {
           if (result) {
             await this.setValuePostPaid();
@@ -286,7 +286,7 @@ export default {
     async savePaid() {
       console.log(this.postPaid);
       await axios
-        .post("credits/paid", this.postPaid)
+        .post("api/credits/paid", this.postPaid)
         .then((result) => {
           if (result) {
             this.$emit("closeModalCredit");
@@ -296,7 +296,7 @@ export default {
     },
     async getCreditFinal() {
       await axios
-        .get(`credits/final/${this.payment_id}`)
+        .get(`api/credits/final/${this.payment_id}`)
         .then((res) => {
           if (res.data.creditFinal.length > 0) {
             this.creditFinal = res.data.creditFinal[0].id;
@@ -324,7 +324,7 @@ export default {
     async saveClient() {
       this.dataClient.id = shortid.generate();
       axios
-        .post("clients", this.dataClient)
+        .post("api/clients", this.dataClient)
         .then((result) => {
           if (result) {
             this.getClients();
@@ -334,7 +334,7 @@ export default {
     },
     async updatePrevious(creditId) {
       axios
-        .put(`credits/previous/${creditId}`, {
+        .put(`api/credits/previous/${creditId}`, {
           next: this.postCredit.id,
         })
         .then((response) => {
@@ -346,7 +346,7 @@ export default {
     },
     async updateNext() {
       axios
-        .put(`credits/next/${this.current}`, {
+        .put(`api/credits/next/${this.current}`, {
           previous: this.postCredit.id,
         })
         .then((response) => {

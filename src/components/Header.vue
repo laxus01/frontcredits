@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <div class="header__left">
-      <h2 class="header__left__title">¡Bienvenido!, JOSE TUÑON</h2>
+      <h2 class="header__left__title">¡Bienvenido!, {{ name }}</h2>
     </div>
     <div class="header__right">
       <v-menu offset-y>
@@ -34,6 +34,7 @@ export default {
   data: () => ({
     hideDetails: true,
     searchText: null,
+    name: "",
     items: [
       {
         key: "logout",
@@ -46,10 +47,14 @@ export default {
     signOut() {
       window.localStorage.clear()
       this.$router.push('/')
+    },
+    getName() {
+      this.name = window.localStorage.getItem('nameUser')
     }
   },
-  watch: {},
-  computed: {},
+  created() {
+    this.getName()
+  },
 };
 </script>
 

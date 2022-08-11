@@ -121,7 +121,7 @@ const shortid = require("shortid")
 export default {
   data() {
     return {
-      paiment: "",
+      paiment: [],
       menu: false,
       dialog: false,
       text: true,
@@ -141,17 +141,17 @@ export default {
   },
   methods: {
     async getPayments() {
-      let data = await axios.get("payments")
+      let data = await axios.get("api/payments")
       this.items = await data.data.desserts
     },
     async getDailyBalance() {
-      let paymentId = this.items[0].id
+      let paymentId = this.paiment.id
       let dataCredits = await axios.get(
-        `credits/totalCredits/paymentId/${paymentId}/date/${this.postBalance.date}`
+        `api/credits/totalCredits/paymentId/${paymentId}/date/${this.postBalance.date}`
       )
       this.totalCredits = this.convert(await dataCredits.data.totalCredits[0].total)
       let dataPaids = await axios.get(
-        `credits/totalPaids/paymentId/${paymentId}/date/${this.postBalance.date}`
+        `api/credits/totalPaids/paymentId/${paymentId}/date/${this.postBalance.date}`
       )
       this.totalPaids = this.convert(await dataPaids.data.totalPaids[0].total)
     },
@@ -168,7 +168,7 @@ export default {
       } else {
         await this.setValuePostBalance()
         await axios
-          .post("credits/paid/saveDailyBalance", this.postBalance)
+          .post("api/credits/paid/saveDailyBalance", this.postBalance)
           .then(async (result) => {
             if (result) {
               location.reload();
@@ -179,8 +179,8 @@ export default {
     setValuePostBalance() {
       this.postBalance.id = shortid.generate()
       this.postBalance.payment_id = this.paiment.id
-      this.postBalance.total_credits = this.totalCredits
-      this.postBalance.total_paids = this.totalPaids
+      this.postBalance.total_credits = this.totalCredits.replace(/\./g, '')
+      this.postBalance.total_paids = this.totalPaids.replace(/\./g, '')
     },
     convert(num) {
       if(!isNaN(num)){

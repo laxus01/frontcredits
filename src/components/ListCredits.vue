@@ -93,12 +93,12 @@ export default {
   },
   methods: {
     async getCredits() {
-      let data = await axios.get(`credits/${this.payment_id}`);
+      let data = await axios.get(`api/credits/${this.payment_id}`);
       this.credits = await data.data.credits;
     },
     async deleteCredit(creditId) {
       await axios
-        .delete(`credits/${creditId}`)
+        .delete(`api/credits/${creditId}`)
         .then((result) => {
           if (result) {
             this.getCredits();

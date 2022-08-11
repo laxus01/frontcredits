@@ -231,7 +231,7 @@ export default {
   },
   methods: {
     async getPayments() {
-      let data = await axios.get("payments")
+      let data = await axios.get("api/payments")
       this.items = await data.data.desserts
     },
     async getCreditInitial(paiment) {
@@ -243,7 +243,7 @@ export default {
         this.next = true
         const paimentId = paiment.id
         let data = await axios.get(
-          `credits/initial/${paimentId}`
+          `api/credits/initial/${paimentId}`
         )
         this.credit = await data.data.credit[0]
         await this.calculateDelay()
@@ -255,7 +255,7 @@ export default {
       const creditId =
         direction === 0 ? this.credit.previous : this.credit.next
       let data = await axios.get(
-        `credits/current/${creditId}`
+        `api/credits/current/${creditId}`
       )
       this.credit = await data.data.credit[0]
       await this.calculateDelay()
@@ -272,7 +272,7 @@ export default {
       } else {
         await this.setValuePostPaid()
         await axios
-          .post("credits/paid", this.postPaid)
+          .post("api/credits/paid", this.postPaid)
           .then(async (result) => {
             if (result) {
               let x = this.postPaid.value * 1000;
@@ -292,7 +292,7 @@ export default {
     },
     async updatePrevious(creditId) {
       axios
-        .put(`credits/previous/${creditId}`, {
+        .put(`api/credits/previous/${creditId}`, {
           next: this.credit.next,
         })
         .then((response) => {
@@ -304,7 +304,7 @@ export default {
     },
     async updateNext(creditId) {
       axios
-        .put(`credits/next/${creditId}`, {
+        .put(`api/credits/next/${creditId}`, {
           previous: this.credit.previous,
         })
         .then((response) => {
@@ -316,7 +316,7 @@ export default {
     },
     async inactivateCredit(creditId) {
       axios
-        .put(`credits/inactivate/${creditId}`)
+        .put(`api/credits/inactivate/${creditId}`)
         .then((response) => {
           console.log(response)
         })
