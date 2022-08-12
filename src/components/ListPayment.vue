@@ -128,7 +128,8 @@
 
 <script>
 const shortid = require("shortid");
-import { mapState, mapActions } from "vuex";
+import axios from "axios"
+//import { mapState, mapActions } from "vuex";
 
 export default {
   data: () => ({
@@ -137,6 +138,7 @@ export default {
     search: "",
     dialog: false,
     dialogDelete: false,
+    desserts: [],
     headers: [
       {
         text: "Cobro",
@@ -157,7 +159,6 @@ export default {
     },
   }),
   computed: {
-    ...mapState(["desserts"]),
     formTitle() {
       return this.editedIndex === -1 ? "Nuevo Cobro" : "Editar Cobro";
     },
@@ -177,11 +178,10 @@ export default {
   },
 
   methods: {
-    ...mapActions(["setPayment"]),
-    ...mapActions(["updatePayment"]),
-    ...mapActions(["deletePayment"]),
-    initialize() {},
-
+    async getPayments() {
+      let data = await axios.get("api/payments")
+      this.desserts = await data.data.desserts
+    },
     editItem(item) {
       this.editedIndex = this.desserts.indexOf(item);
       this.editedItem = Object.assign({}, item);
@@ -219,16 +219,57 @@ export default {
       if (this.editedIndex > -1) {
         this.updatePayment(this.editedItem);
       } else {
-        this.editedItem.id = shortid.generate();
-        this.setPayment(this.editedItem);
+        const id = shortid.generate();
+        this.setPayment(this.editedItem, id);
       }
       this.close();
     },
 
     handleClick(value) {
       this.$router.push(`create-credit/${value.id}`)
-    }
-    
+    },
+    async deletePayment(editedItem) {
+      axios
+        .put(`api/payments/inactivate/${editedItem.id}`)
+        .then(() => {
+          this.getPayments()
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+    async updatePayment(editedItem) {
+      axios
+        .put(`api/payments/update/${editedItem.id}`, {
+          date: editedItem.date,
+          detail: editedItem.detail,
+          initial_value: editedItem.initial_value,
+        })
+        .then(() => {
+          this.getPayments()
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+    async setPayment(editedItem, id) {
+      axios
+        .post(`api/payments`, {
+          id: id,
+          date: editedItem.date,
+          detail: editedItem.detail,
+          initial_value: editedItem.initial_value,
+        })
+        .then(() => {
+          this.getPayments()
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },    
+  },
+  created() {
+    this.getPayments()
   },
 };
 </script>

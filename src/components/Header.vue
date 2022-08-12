@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <div class="header__left">
-      <h2 class="header__left__title">¡Bienvenido!, {{ name }}</h2>
+      <h2 class="header__left__title">¡Bienvenido! {{ name }}</h2>
     </div>
     <div class="header__right">
       <v-menu offset-y>
@@ -18,7 +18,19 @@
               <v-list-item-content>
                 <v-list-item-title
                   @click="signOut()"
-                  v-text="'Salir'"
+                  v-text="'Mi Perfil'"
+                ></v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+        <v-list dense>
+          <v-list-item-group>
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title
+                  @click="signOut()"
+                  v-text="'Cerrar Sesión'"
                 ></v-list-item-title>
               </v-list-item-content>
             </v-list-item>
