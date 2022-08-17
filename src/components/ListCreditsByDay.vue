@@ -50,8 +50,8 @@
                 text
                 color="primary"
                 @click="
-                  $refs.menu2.save(date2);
-                  getCreditsByDay();
+                  $refs.menu2.save(date2)
+                  getCreditsByDay()
                 "
               >
                 Seleccionar
@@ -178,8 +178,8 @@
 </template>
 
 <script>
-const shortid = require("shortid");
-import axios from "axios";
+const shortid = require("shortid")
+import axios from "axios"
 
 export default {
   data: () => ({
@@ -201,7 +201,7 @@ export default {
         sortable: false,
         value: "name",
       },
-      { text: "Valor Pagado", value: "value" },
+      { text: "Valor Prestado", value: "value" },
       { text: "Fecha", value: "date" },
       { text: "Acción", value: "actions", sortable: false },
     ],
@@ -216,72 +216,73 @@ export default {
 
   watch: {
     dialog(val) {
-      val || this.close();
+      val || this.close()
     },
     dialogDelete(val) {
-      val || this.closeDelete();
+      val || this.closeDelete()
     },
   },
 
   methods: {
     viewDate() {
-      this.stateDate = true;
+      this.stateDate = true
     },
     async getPayments() {
-      let data = await axios.get("api/payments");
-      this.items = await data.data.desserts;
+      let data = await axios.get("api/payments")
+      this.items = await data.data.desserts
     },
     async getCreditsByDay() {
       let data = await axios.get(
         `api/credits/getCreditsByDay/paymentId/${this.paiment.id}/date/${this.date2}`
-      );
-      this.desserts = await data.data.credits;
+      )
+      this.desserts = await data.data.credits
     },
     editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
+      this.editedIndex = this.desserts.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      this.dialog = true
     },
     deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialogDelete = true;
+      this.editedIndex = this.desserts.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      this.dialogDelete = true
     },
     deleteItemConfirm() {
-      this.deleteCredit(this.editedItem);
-      this.closeDelete();
+      this.deleteCredit(this.editedItem)
+      this.closeDelete()
     },
     close() {
-      this.dialog = false;
+      this.dialog = false
       this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      })
     },
     closeDelete() {
-      this.dialogDelete = false;
+      this.dialogDelete = false
       this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      })
     },
     save() {
       if (this.editedIndex > -1) {
-        this.updateCredit(this.editedItem);
-        this.close();
+        this.updateCredit(this.editedItem)
+        this.close()
       }
     },
     async deleteCredit(editedItem) {
+          console.log(editedItem)
       axios
         .delete(`api/credits/${editedItem.id}`)
-        .then(() => {
-          this.getCreditsByDay();
-          this.updatePrevious(editedItem.previous);
-          this.updateNext(editedItem.next);
+        .then((res) => {
+          this.getCreditsByDay()
+          this.updatePrevious(editedItem)
+          this.updateNext(editedItem)
         })
         .catch((err) => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
     async updateCredit(editedItem) {
       axios
@@ -290,45 +291,45 @@ export default {
           value: editedItem.value,
         })
         .then(() => {
-          this.getCreditsByDay();
+          this.getCreditsByDay()
         })
         .catch((err) => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
-    async updatePrevious(creditId) {
+    async updatePrevious(editedItem) {
       axios
-        .put(`api/credits/previous/${creditId}`, {
-          next: this.credit.next,
+        .put(`api/credits/previous/${editedItem.previous}`, {
+          next: editedItem.next,
         })
         .then((response) => {
-          console.log(response);
+          console.log(response)
         })
         .catch((err) => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
-    async updateNext(creditId) {
+    async updateNext(editedItem) {
       axios
-        .put(`api/credits/next/${creditId}`, {
-          previous: this.credit.previous,
+        .put(`api/credits/next/${editedItem.next}`, {
+          previous: editedItem.previous,
         })
         .then((response) => {
-          console.log(response);
+          console.log(response)
         })
         .catch((err) => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
   },
   created() {
-    this.getPayments();
+    this.getPayments()
   },
-};
+}
 </script>
 
 <style>
 .table {
-  top: 20px;
+  top: 20px
 }
 </style>
