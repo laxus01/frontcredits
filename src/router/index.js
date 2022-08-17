@@ -6,6 +6,8 @@ import CreateCredit from '../views/CreateCredit'
 import RegisterPaid from '../views/RegisterPaid'
 import BalancePayment from '../views/BalancePayment'
 import Dashboard from '../views/Dashboard'
+import EditPaids from '../views/EditPaids'
+import EditCredits from '../views/EditCredits'
 
 
 Vue.use(VueRouter)
@@ -51,6 +53,24 @@ const routes = [
         name: 'BalancePayment',    
         props: true,
         component: BalancePayment,
+        meta: {
+          requiresAuth: true,
+        },  
+      },
+      {
+        path: '/edit-paids',
+        name: 'EditPaids',    
+        props: true,
+        component: EditPaids,
+        meta: {
+          requiresAuth: true,
+        },  
+      },
+      {
+        path: '/edit-credits',
+        name: 'EditCredits',    
+        props: true,
+        component: EditCredits,
         meta: {
           requiresAuth: true,
         },  

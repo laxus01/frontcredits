@@ -3,6 +3,7 @@
     <v-row>
       <v-col cols="2">
         <v-autocomplete
+          @change="viewDate()"
           :items="items"
           return-object
           label="Cobro*"
@@ -13,7 +14,7 @@
           v-model="paiment"
         ></v-autocomplete>
       </v-col>
-      <v-col v-if="paiment" cols="2">
+      <v-col v-if="stateDate" cols="2">
         <v-menu
           ref="menu"
           v-model="menu"
@@ -121,6 +122,7 @@ const shortid = require("shortid")
 export default {
   data() {
     return {
+      stateDate: false,
       paiment: [],
       menu: false,
       dialog: false,
@@ -140,6 +142,9 @@ export default {
     }
   },
   methods: {
+    viewDate() {
+      this.stateDate = true;
+    },
     async getPayments() {
       let data = await axios.get("api/payments")
       this.items = await data.data.desserts

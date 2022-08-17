@@ -54,18 +54,17 @@
         </v-menu>
       </v-col>
       <v-col cols="2">
-        
-    <v-btn
-      v-if="add"
-      @click="dialog2 = !dialog2"
-      class="mx-2"
-      fab
-      dark
-      small
-      color="primary"
-    >
-      <v-icon dark> person_add_alt_1 </v-icon>
-    </v-btn>
+        <v-btn
+          v-if="add"
+          @click="dialog2 = !dialog2"
+          class="mx-2"
+          fab
+          dark
+          small
+          color="primary"
+        >
+          <v-icon dark> person_add_alt_1 </v-icon>
+        </v-btn>
       </v-col>
     </v-row>
     <v-row>
@@ -115,23 +114,13 @@
         ></v-text-field>
       </v-col>
       <v-col cols="2">
-        <v-btn
-          depressed
-          rounded
-          color="primary"
-          @click="savePaid()"
-        >
-        <v-icon
-          left
-          dark
-        >
-          file_download_done
-        </v-icon>
+        <v-btn depressed rounded color="primary" @click="savePaid()">
+          <v-icon left dark> file_download_done </v-icon>
           GUARDAR
         </v-btn>
       </v-col>
     </v-row>
-    <v-row>      
+    <v-row>
       <v-col cols="7" align="center">
         <v-btn
           class="mx-2"
@@ -158,38 +147,28 @@
       </v-col>
     </v-row>
     <v-row justify="center">
-    <v-dialog
-      v-model="dialog"
-      persistent
-      max-width="300"
-    >
-      <v-card>
-        <v-card-title class="text-h5">
-          ¡Upsss!
-        </v-card-title>
-        <v-card-text>Debes llenar los campos obligatorios.</v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            text
-            @click="dialog = false"
-          >
-            Aceptar
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-row>
+      <v-dialog v-model="dialog" persistent max-width="300">
+        <v-card>
+          <v-card-title class="text-h5"> ¡Upsss! </v-card-title>
+          <v-card-text>Debes llenar los campos obligatorios.</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" text @click="dialog = false">
+              Aceptar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-row>
   </v-container>
 </template>
 
 <script>
-import FormCredit from "../components/FormCredit"
-import axios from "axios"
-import moment from "moment"
+import FormCredit from "../components/FormCredit";
+import axios from "axios";
+import moment from "moment";
 
-const shortid = require("shortid")
+const shortid = require("shortid");
 
 export default {
   data() {
@@ -224,70 +203,66 @@ export default {
       menu: false,
       dialog: false,
       dialog2: false,
-    }
+    };
   },
   components: {
     FormCredit,
   },
   methods: {
     async getPayments() {
-      let data = await axios.get("api/payments")
-      this.items = await data.data.desserts
+      let data = await axios.get("api/payments");
+      this.items = await data.data.desserts;
     },
     async getCreditInitial(paiment) {
-      this.payment_id = paiment.id
+      this.payment_id = paiment.id;
       if (!paiment.id) {
-        this.dialog = true
+        this.dialog = true;
       } else {
-        this.add = true
-        this.next = true
-        const paimentId = paiment.id
-        let data = await axios.get(
-          `api/credits/initial/${paimentId}`
-        )
-        this.credit = await data.data.credit[0]
-        await this.calculateDelay()
+        this.add = true;
+        this.next = true;
+        const paimentId = paiment.id;
+        let data = await axios.get(`api/credits/initial/${paimentId}`);
+        this.credit = await data.data.credit[0];
+        await this.calculateDelay();
       }
     },
     async getCurrentCredit(direction) {
-      this.next = true
-      this.previous = true
+      this.next = true;
+      this.previous = true;
       const creditId =
-        direction === 0 ? this.credit.previous : this.credit.next
-      let data = await axios.get(
-        `api/credits/current/${creditId}`
-      )
-      this.credit = await data.data.credit[0]
-      await this.calculateDelay()
+        direction === 0 ? this.credit.previous : this.credit.next;
+      let data = await axios.get(`api/credits/current/${creditId}`);
+      this.credit = await data.data.credit[0];
+      await this.calculateDelay();
 
       if (direction === 0 && this.credit.previous === "0") {
-        this.previous = false
+        this.previous = false;
       } else if (direction === 1 && this.credit.next === "0") {
-        this.next = false
+        this.next = false;
       }
     },
     async savePaid() {
       if (this.postPaid.date === "" || this.postPaid.paid === "") {
-        this.dialog = true
+        this.dialog = true;
       } else {
-        await this.setValuePostPaid()
+        await this.setValuePostPaid();
         await axios
           .post("api/credits/paid", this.postPaid)
           .then(async (result) => {
             if (result) {
               let x = this.postPaid.value * 1000;
-              if(x >= this.credit.balance){          
-                await this.updatePrevious(this.credit.previous)
-                await this.updateNext(this.credit.next)
-                await this.inactivateCredit(this.credit.id)
+              if (x >= this.credit.balance) {
+                await this.updatePrevious(this.credit.previous);
+                await this.updateNext(this.credit.next);
+                await this.inactivateCredit(this.credit.id);
               }
               if (this.credit.next === "0") {
                 location.reload();
               } else {
-                await this.getCurrentCredit(1)
-              }              
+                await this.getCurrentCredit(1);
+              }
             }
-          })
+          });
       }
     },
     async updatePrevious(creditId) {
@@ -296,11 +271,11 @@ export default {
           next: this.credit.next,
         })
         .then((response) => {
-          console.log(response)
+          console.log(response);
         })
         .catch((err) => {
-          console.log(err)
-        })
+          console.log(err);
+        });
     },
     async updateNext(creditId) {
       axios
@@ -308,46 +283,54 @@ export default {
           previous: this.credit.previous,
         })
         .then((response) => {
-          console.log(response)
+          console.log(response);
         })
         .catch((err) => {
-          console.log(err)
-        })
+          console.log(err);
+        });
     },
     async inactivateCredit(creditId) {
       axios
         .put(`api/credits/inactivate/${creditId}`)
         .then((response) => {
-          console.log(response)
+          console.log(response);
         })
         .catch((err) => {
-          console.log(err)
-        })
+          console.log(err);
+        });
     },
     setValuePostPaid() {
-      this.postPaid.id = shortid.generate()
-      this.postPaid.credit_id = this.credit.id
+      this.postPaid.id = shortid.generate();
+      this.postPaid.credit_id = this.credit.id;
     },
     closeModalCredit() {
-      this.dialog2 = false
+      this.dialog2 = false;
     },
     calculateDelay() {
-      let limitDate = moment(this.credit.date).add(this.credit.mode, "d").format("YYYY-MM-DD")
-      let currentDate = moment().format("YYYY-MM-DD")
-      this.delayDays = currentDate > limitDate ? moment(currentDate).diff(limitDate, "d") : 0
+      let limitDate = moment(this.credit.date)
+        .add(this.credit.mode, "d")
+        .format("YYYY-MM-DD");
+      let currentDate = moment().format("YYYY-MM-DD");
+      this.delayDays =
+        currentDate > limitDate ? moment(currentDate).diff(limitDate, "d") : 0;
     },
   },
   created() {
-    this.getPayments()
+    this.getPayments();
   },
   convert(num) {
-    if(!isNaN(num)){
-        num = num.toString().split("").reverse().join("").replace(/(?=\d*\.?)(\d{3})/g,'$1.');
-        num = num.split("").reverse().join("").replace(/^[\.]/, "");
-        return num;
+    if (!isNaN(num)) {
+      num = num
+        .toString()
+        .split("")
+        .reverse()
+        .join("")
+        .replace(/(?=\d*\.?)(\d{3})/g, "$1.");
+      num = num.split("").reverse().join("").replace(/^[\.]/, "");
+      return num;
     }
   },
-}
+};
 </script>
 
 <style>

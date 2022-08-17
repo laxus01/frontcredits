@@ -53,9 +53,9 @@
           </v-dialog>
         </v-toolbar>
       </template>
-      <template v-slot:[`item.actions`]="{ item }">
+      <!-- <template v-slot:[`item.actions`]="{ item }">
         <v-icon small @click="deleteItem(item)"> delete </v-icon>
-      </template>
+      </template> -->
     </v-data-table>
   </v-container>
 </template>
