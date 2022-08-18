@@ -86,13 +86,13 @@ export default {
           title: "Informes",
           items: [
             {
-              title: "Home",
-              action: "assessment",
-              to: "/home",
+              title: "Estado Actual",
+              action: "auto_awesome_motion",
+              to: "/actual-state",
             },
           ],
         },
-        {
+        /* {
           action: "assessment",
           title: "Estadisticas",
           items: [
@@ -102,7 +102,7 @@ export default {
               to: "/home",
             },
           ],
-        },
+        }, */
       ],
     };
   },

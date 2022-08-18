@@ -13,7 +13,7 @@
     <v-row>
       <v-col cols="2">
         <v-autocomplete
-          @change="getCreditInitial(paiment)"
+          @change="viewDate()"
           :items="items"
           return-object
           label="Cobro*"
@@ -24,7 +24,7 @@
           v-model="paiment"
         ></v-autocomplete>
       </v-col>
-      <v-col cols="2">
+      <v-col cols="2" v-if="stateDate">
         <v-menu
           ref="menu"
           v-model="menu"
@@ -47,7 +47,14 @@
           <v-date-picker v-model="postPaid.date" no-title scrollable>
             <v-spacer></v-spacer>
             <v-btn text color="primary" @click="menu = false"> Cancelar </v-btn>
-            <v-btn text color="primary" @click="$refs.menu.save(postPaid.date)">
+            <v-btn
+              text
+              color="primary"
+              @click="
+                $refs.menu.save(postPaid.date);
+                getCreditInitial(paiment);
+              "
+            >
               Seleccionar
             </v-btn>
           </v-date-picker>
@@ -173,6 +180,7 @@ const shortid = require("shortid");
 export default {
   data() {
     return {
+      stateDate: false,
       add: false,
       next: false,
       previous: false,
@@ -209,6 +217,9 @@ export default {
     FormCredit,
   },
   methods: {
+    viewDate() {
+      this.stateDate = true;
+    },
     async getPayments() {
       let data = await axios.get("api/payments");
       this.items = await data.data.desserts;

@@ -8,6 +8,7 @@ import BalancePayment from '../views/BalancePayment'
 import Dashboard from '../views/Dashboard'
 import EditPaids from '../views/EditPaids'
 import EditCredits from '../views/EditCredits'
+import ActualState from '../views/ActualState'
 
 
 Vue.use(VueRouter)
@@ -71,6 +72,15 @@ const routes = [
         name: 'EditCredits',    
         props: true,
         component: EditCredits,
+        meta: {
+          requiresAuth: true,
+        },  
+      },
+      {
+        path: '/actual-state',
+        name: 'ActualState',    
+        props: true,
+        component: ActualState,
         meta: {
           requiresAuth: true,
         },  

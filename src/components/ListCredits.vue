@@ -81,7 +81,6 @@ export default {
         { text: "Cliente", align: "start", value: "name" },
         { text: "Total", value: "total" },
         { text: "Fecha", value: "date" },
-        { text: "Acción", value: "actions", sortable: false },
       ],
     };
   },
