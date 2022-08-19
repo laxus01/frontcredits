@@ -89,20 +89,24 @@ export default {
               title: "Estado Actual",
               action: "auto_awesome_motion",
               to: "/actual-state",
+            },{
+              title: "Creditos Vencidos",
+              action: "auto_awesome_motion",
+              to: "/credits-expired",
             },
           ],
         },
-        /* {
+        {
           action: "assessment",
           title: "Estadisticas",
           items: [
             {
-              title: "Home",
+              title: "Grafica Actual",
               action: "assessment",
-              to: "/home",
+              to: "/graphic-state",
             },
           ],
-        }, */
+        },
       ],
     };
   },

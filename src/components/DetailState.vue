@@ -27,7 +27,7 @@
       <div class="content fourth">
         <div class="content fourth__title">Total</div>
         <div class="content fourth__body">
-          <div class="content fourth__body--button info">
+          <div class="content fourth__body--button primary">
             $ {{ convert(state.total ? state.total : 0) }}
           </div>
         </div>

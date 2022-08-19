@@ -9,6 +9,8 @@ import Dashboard from '../views/Dashboard'
 import EditPaids from '../views/EditPaids'
 import EditCredits from '../views/EditCredits'
 import ActualState from '../views/ActualState'
+import CreditsExpired from '../views/CreditsExpired'
+import GraphicState from '../views/GraphicState'
 
 
 Vue.use(VueRouter)
@@ -81,6 +83,24 @@ const routes = [
         name: 'ActualState',    
         props: true,
         component: ActualState,
+        meta: {
+          requiresAuth: true,
+        },  
+      },
+      {
+        path: '/credits-expired',
+        name: 'CreditsExpired',    
+        props: true,
+        component: CreditsExpired,
+        meta: {
+          requiresAuth: true,
+        },  
+      },
+      {
+        path: '/graphic-state',
+        name: 'GraphicState',    
+        props: true,
+        component: GraphicState,
         meta: {
           requiresAuth: true,
         },  
