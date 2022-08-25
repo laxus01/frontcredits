@@ -22,6 +22,7 @@
           no-data-text="Cobro no registrado"
           :menu-props="{ maxHeight: 100 }"
           v-model="paiment"
+          outlined
         ></v-autocomplete>
       </v-col>
       <v-col cols="2" v-if="stateDate">
@@ -42,6 +43,7 @@
               readonly
               v-bind="attrs"
               v-on="on"
+              outlined
             ></v-text-field>
           </template>
           <v-date-picker v-model="postPaid.date" no-title scrollable>
@@ -75,11 +77,22 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="3">
+      <v-col cols="4">
         <v-text-field
           ref="name"
           label="Cliente"
           v-model="credit.name"
+          outlined
+        ></v-text-field>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="2">
+        <v-text-field
+          ref="name"
+          label="Total Pago"
+          v-model="credit.value"
+          outlined
         ></v-text-field>
       </v-col>
       <v-col cols="2">
@@ -87,6 +100,7 @@
           ref="name"
           label="Valor Prestamo"
           v-model="credit.value"
+          outlined
         ></v-text-field>
       </v-col>
       <v-col cols="2">
@@ -94,6 +108,7 @@
           ref="name"
           label="Saldo Pendiente"
           v-model="credit.balance"
+          outlined
         ></v-text-field>
       </v-col>
     </v-row>
@@ -103,6 +118,7 @@
           ref="name"
           label="Dias Retraso"
           v-model="delayDays"
+          outlined
         ></v-text-field>
       </v-col>
       <v-col cols="2">
@@ -110,6 +126,7 @@
           ref="name"
           label="Total Abonos"
           v-model="credit.total_paid"
+          outlined
         ></v-text-field>
       </v-col>
       <v-col cols="2">
@@ -118,6 +135,7 @@
           label="Valor Abono*"
           v-model="postPaid.value"
           v-on:keyup.enter="savePaid()"
+          outlined
         ></v-text-field>
       </v-col>
       <v-col cols="2">
@@ -233,8 +251,8 @@ export default {
         this.next = true;
         const paimentId = paiment.id;
         let data = await axios.get(`api/credits/initial/${paimentId}`);
-        this.credit = await data.data.credit[0];
-        await this.calculateDelay();
+        let credit = await data.data.credit;
+        this.calculateDelay(credit);
       }
     },
     async getCurrentCredit(direction) {
@@ -243,8 +261,8 @@ export default {
       const creditId =
         direction === 0 ? this.credit.previous : this.credit.next;
       let data = await axios.get(`api/credits/current/${creditId}`);
-      this.credit = await data.data.credit[0];
-      await this.calculateDelay();
+      let credit = await data.data.credit;
+      this.calculateDelay(credit);
 
       if (direction === 0 && this.credit.previous === "0") {
         this.previous = false;
@@ -256,7 +274,7 @@ export default {
       if (this.postPaid.date === "" || this.postPaid.paid === "") {
         this.dialog = true;
       } else {
-        await this.setValuePostPaid();
+        this.setValuePostPaid();
         await axios
           .post("api/credits/paid", this.postPaid)
           .then(async (result) => {
@@ -317,7 +335,23 @@ export default {
     closeModalCredit() {
       this.dialog2 = false;
     },
-    calculateDelay() {
+    calculateDelay(credit) {      
+      let newCredit = []
+      credit.forEach((item) => {
+        newCredit.push({
+          balance: this.convert(item.balance),
+          date: item.date,
+          id: item.id,
+          mode: item.mode,
+          name: item.name,
+          next: item.next,
+          previous: item.previous,
+          total: item.total,
+          total_paid: this.convert(item.total_paid),
+          value: this.convert(item.value),
+        });
+      });
+      this.credit = newCredit[0]
       let limitDate = moment(this.credit.date)
         .add(this.credit.mode, "d")
         .format("YYYY-MM-DD");
@@ -325,21 +359,21 @@ export default {
       this.delayDays =
         currentDate > limitDate ? moment(currentDate).diff(limitDate, "d") : 0;
     },
+    convert(num) {
+      if (!isNaN(num)) {
+        num = num
+          .toString()
+          .split("")
+          .reverse()
+          .join("")
+          .replace(/(?=\d*\.?)(\d{3})/g, "$1.");
+        num = num.split("").reverse().join("").replace(/^[\.]/, "");
+        return num;
+      }
+    },
   },
   created() {
     this.getPayments();
-  },
-  convert(num) {
-    if (!isNaN(num)) {
-      num = num
-        .toString()
-        .split("")
-        .reverse()
-        .join("")
-        .replace(/(?=\d*\.?)(\d{3})/g, "$1.");
-      num = num.split("").reverse().join("").replace(/^[\.]/, "");
-      return num;
-    }
   },
 };
 </script>

@@ -19,6 +19,7 @@
             no-data-text="Cobro no registrado"
             :menu-props="{ maxHeight: 100 }"
             v-model="paiment"
+            outlined
           ></v-autocomplete>
         </v-col>
         <v-col cols="2" v-if="stateDate">
@@ -236,6 +237,16 @@ export default {
         `api/credits/getCreditsByDay/paymentId/${this.paiment.id}/date/${this.date2}`
       )
       this.desserts = await data.data.credits
+      let credits = await data.data.credits
+      this.desserts = [];
+      credits.forEach((credits) => {
+        this.desserts.push({
+          id: credits.id,
+          name: credits.name,
+          value: this.convert(credits.value),
+          date: credits.date,
+        });
+      });
     },
     editItem(item) {
       this.editedIndex = this.desserts.indexOf(item)
@@ -288,7 +299,7 @@ export default {
       axios
         .put(`api/credits/updateCredit/${editedItem.id}`, {
           date: editedItem.date,
-          value: editedItem.value,
+          value: editedItem.value.replace(/\./g, ''),
         })
         .then(() => {
           this.getCreditsByDay()
@@ -320,6 +331,18 @@ export default {
         .catch((err) => {
           console.log(err)
         })
+    },
+    convert(num) {
+      if (!isNaN(num)) {
+        num = num
+          .toString()
+          .split("")
+          .reverse()
+          .join("")
+          .replace(/(?=\d*\.?)(\d{3})/g, "$1.");
+        num = num.split("").reverse().join("").replace(/^[\.]/, "");
+        return num;
+      }
     },
   },
   created() {

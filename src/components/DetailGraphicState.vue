@@ -12,6 +12,7 @@
           no-data-text="Cobro no registrado"
           :menu-props="{ maxHeight: 100 }"
           v-model="paiment"
+          outlined
         ></v-autocomplete>
       </v-col>
     </v-row>

@@ -12,6 +12,7 @@
           no-data-text="Cobro no registrado"
           :menu-props="{ maxHeight: 100 }"
           v-model="paiment"
+          outlined
         ></v-autocomplete>
       </v-col>
       <v-col v-if="stateDate" cols="2">
@@ -32,6 +33,7 @@
               readonly
               v-bind="attrs"
               v-on="on"
+              outlined
             ></v-text-field>
           </template>
           <v-date-picker v-model="postBalance.date" no-title scrollable>
@@ -57,6 +59,7 @@
           v-model="totalCredits"
           ref="name"
           label="Total Prestamos"
+          outlined
         ></v-text-field>
       </v-col>
       <v-col cols="3">
@@ -64,6 +67,7 @@
           v-model="totalPaids"
           ref="name"
           label="Total Abonos"
+          outlined
         ></v-text-field>
       </v-col>
     </v-row>
@@ -73,6 +77,7 @@
           ref="name"
           label="Base"
           v-model="postBalance.base"
+          outlined
         ></v-text-field>
       </v-col>
       <v-col cols="3">
@@ -81,6 +86,7 @@
           label="Gastos"
           v-model="postBalance.bills"
           v-on:keyup="calculateDelivery()"
+          outlined
         ></v-text-field>
       </v-col>
       <v-col cols="3">
@@ -88,6 +94,7 @@
           ref="name"
           label="Entrega"
           v-model="postBalance.delivery"
+          outlined
         ></v-text-field>
       </v-col>
       <v-col cols="2">

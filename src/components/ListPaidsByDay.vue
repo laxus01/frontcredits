@@ -19,6 +19,7 @@
             no-data-text="Cobro no registrado"
             :menu-props="{ maxHeight: 100 }"
             v-model="paiment"
+            outlined
           ></v-autocomplete>
         </v-col>
         <v-col cols="2" v-if="stateDate">
@@ -39,6 +40,7 @@
                 readonly
                 v-bind="attrs"
                 v-on="on"
+                outlined
               ></v-text-field>
             </template>
             <v-date-picker v-model="date2" no-title scrollable>
@@ -235,7 +237,16 @@ export default {
       let data = await axios.get(
         `api/credits/getPaidsByDay/paymentId/${this.paiment.id}/date/${this.date2}`
       );
-      this.desserts = await data.data.paids;
+      let paids = await data.data.paids;
+      this.desserts = [];
+      paids.forEach((paids) => {
+        this.desserts.push({
+          id: paids.id,
+          name: paids.name,
+          value: this.convert(paids.value),
+          date: paids.date,
+        });
+      });
     },
     editItem(item) {
       this.editedIndex = this.desserts.indexOf(item);
@@ -286,7 +297,7 @@ export default {
       axios
         .put(`api/credits/updatePaid/${editedItem.id}`, {
           date: editedItem.date,
-          value: editedItem.value,
+          value: editedItem.value.replace(/\./g, ''),
         })
         .then(() => {
           this.getPaidsByDay();
@@ -294,6 +305,18 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+    },
+    convert(num) {
+      if (!isNaN(num)) {
+        num = num
+          .toString()
+          .split("")
+          .reverse()
+          .join("")
+          .replace(/(?=\d*\.?)(\d{3})/g, "$1.");
+        num = num.split("").reverse().join("").replace(/^[\.]/, "");
+        return num;
+      }
     },
   },
   created() {
