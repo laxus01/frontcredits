@@ -241,10 +241,16 @@ export default {
       this.desserts = [];
       paids.forEach((paids) => {
         this.desserts.push({
+          credit_id: paids.credit_id,
+          next: paids.next,
+          previous: paids.previous,
+          balance: paids.balance,
           id: paids.id,
           name: paids.name,
           value: this.convert(paids.value),
+          oldValue: paids.value,
           date: paids.date,
+          state: paids.state,
         });
       });
     },
@@ -282,25 +288,81 @@ export default {
         this.close();
       }
     },
-    async deletePaid(editedItem) {
-      axios
-        .delete(`api/credits/deletePaid/${editedItem.id}`)
-        .then(() => {
-          this.getPaidsByDay();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
     async updatePaid(editedItem) {
-      console.log(editedItem);
+      let value = editedItem.value * 1000;
+      let newValue = value > editedItem.oldValue ? value - editedItem.oldValue : value;
+      let balance = editedItem.balance;
       axios
         .put(`api/credits/updatePaid/${editedItem.id}`, {
           date: editedItem.date,
           value: editedItem.value.replace(/\./g, ''),
         })
-        .then(() => {
-          this.getPaidsByDay();
+        .then(async () => {
+          if (newValue >= balance) {
+            await this.updatePrevious(editedItem.previous, editedItem.next);
+            await this.updateNext(editedItem.next, editedItem.previous);
+            await this.inactivateCredit(editedItem.credit_id);
+          }
+          await this.getPaidsByDay();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    async deletePaid(editedItem) {
+      axios
+        .delete(`api/credits/deletePaid/${editedItem.id}`)
+        .then(async () => {
+          if(editedItem.state === 0) {
+            await this.updatePrevious(editedItem.previous, editedItem.credit_id);
+            await this.updateNext(editedItem.next, editedItem.credit_id);
+            await this.activateCredit(editedItem.credit_id);
+          }
+          await this.getPaidsByDay();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    async updatePrevious(creditId, next) {
+      axios
+        .put(`api/credits/previous/${creditId}`, {
+          next: next,
+        })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    async updateNext(creditId, previous) {
+      axios
+        .put(`api/credits/next/${creditId}`, {
+          previous: previous,
+        })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    async activateCredit(creditId) {
+      axios
+        .put(`api/credits/activate/${creditId}`)
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    async inactivateCredit(creditId) {
+      axios
+        .put(`api/credits/inactivate/${creditId}`)
+        .then((response) => {
+          console.log(response);
         })
         .catch((err) => {
           console.log(err);

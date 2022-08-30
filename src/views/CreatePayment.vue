@@ -4,7 +4,7 @@
       <v-banner color="blue darken-3" dark elevation="7" icon="$mdiAccount"
         >Mis Cobros</v-banner
       >
-    <ListPayment />
+    <ListPayment class="top"/>
     </v-card>
   </v-container>
 </template>
@@ -24,4 +24,7 @@ export default {
 </script>
 
 <style>
+.top {
+  margin-top: 20px;
+}
 </style>

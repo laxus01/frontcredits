@@ -4,7 +4,7 @@
       <v-banner color="blue darken-3" dark elevation="7" icon="$mdiAccount"
         >Listado De Creditos </v-banner
       >
-    <ListCredits :payment_id="$route.params.id" />
+    <ListCredits :payment_id="$route.params.id" class="top"/>
     </v-card>
   </v-container>
 </template>
@@ -27,4 +27,7 @@ export default {
 </script>
 
 <style>
+.top {
+  margin-top: 20px;
+}
 </style>

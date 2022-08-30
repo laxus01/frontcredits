@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row>
+    <!-- <v-row>
       <v-col cols="2">
         <v-autocomplete
           @change="viewDate()"
@@ -52,9 +52,9 @@
           </v-date-picker>
         </v-menu>
       </v-col>
-    </v-row>
+    </v-row> -->
     <v-row>
-      <v-col cols="3">
+      <v-col cols="2">
         <v-text-field
           v-model="totalCredits"
           ref="name"
@@ -62,7 +62,7 @@
           outlined
         ></v-text-field>
       </v-col>
-      <v-col cols="3">
+      <v-col cols="2">
         <v-text-field
           v-model="totalPaids"
           ref="name"
@@ -71,8 +71,8 @@
         ></v-text-field>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="3">
+    <v-row> 
+      <v-col cols="2">
         <v-text-field
           ref="name"
           label="Base"
@@ -80,7 +80,7 @@
           outlined
         ></v-text-field>
       </v-col>
-      <v-col cols="3">
+      <v-col cols="2">
         <v-text-field
           ref="name"
           label="Gastos"
@@ -89,19 +89,16 @@
           outlined
         ></v-text-field>
       </v-col>
-      <v-col cols="3">
+      <v-col cols="2">
         <v-text-field
           ref="name"
           label="Entrega"
           v-model="postBalance.delivery"
           outlined
+          v-on:keyup.enter="saveBalance()"          
+          append-icon="file_download_done"
+          @click:append="saveBalance()"
         ></v-text-field>
-      </v-col>
-      <v-col cols="2">
-        <v-btn depressed rounded color="primary" @click="saveBalance()">
-          <v-icon left dark> file_download_done </v-icon>
-          GUARDAR
-        </v-btn>
       </v-col>
     </v-row>
     <v-row justify="center">
@@ -129,7 +126,7 @@ const shortid = require("shortid")
 export default {
   data() {
     return {
-      stateDate: false,
+      stateDate: true,
       paiment: [],
       menu: false,
       dialog: false,
@@ -147,6 +144,9 @@ export default {
       totalCredits: "",
       totalPaids: "",
     }
+  },
+  props: {
+    paymentId: "",
   },
   methods: {
     viewDate() {
@@ -203,7 +203,7 @@ export default {
     },
   },
   created() {
-    this.getPayments()
+    //this.getPayments()
   },
 }
 </script>

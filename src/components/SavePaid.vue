@@ -10,167 +10,211 @@
         @closeModalCredit="closeModalCredit"
       />
     </v-dialog>
-    <v-row>
-      <v-col cols="2">
-        <v-autocomplete
-          @change="viewDate()"
-          :items="items"
-          return-object
-          label="Cobro*"
-          item-value="value"
-          item-text="detail"
-          no-data-text="Cobro no registrado"
-          :menu-props="{ maxHeight: 100 }"
-          v-model="paiment"
-          outlined
-        ></v-autocomplete>
-      </v-col>
-      <v-col cols="2" v-if="stateDate">
-        <v-menu
-          ref="menu"
-          v-model="menu"
-          :close-on-content-click="false"
-          :return-value.sync="postPaid.date"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="postPaid.date"
-              label="Fecha*"
-              persistent-hint
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              outlined
-            ></v-text-field>
-          </template>
-          <v-date-picker v-model="postPaid.date" no-title scrollable>
-            <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="menu = false"> Cancelar </v-btn>
-            <v-btn
-              text
-              color="primary"
-              @click="
-                $refs.menu.save(postPaid.date);
-                getCreditInitial(paiment);
-              "
-            >
-              Seleccionar
-            </v-btn>
-          </v-date-picker>
-        </v-menu>
-      </v-col>
-      <v-col cols="2">
-        <v-btn
-          v-if="add"
-          @click="dialog2 = !dialog2"
-          class="mx-2"
-          fab
-          dark
-          small
-          color="primary"
-        >
-          <v-icon dark> person_add_alt_1 </v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="4">
-        <v-text-field
-          ref="name"
-          label="Cliente"
-          v-model="credit.name"
-          outlined
-        ></v-text-field>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="2">
-        <v-text-field
-          ref="name"
-          label="Total Pago"
-          v-model="credit.value"
-          outlined
-        ></v-text-field>
-      </v-col>
-      <v-col cols="2">
-        <v-text-field
-          ref="name"
-          label="Valor Prestamo"
-          v-model="credit.value"
-          outlined
-        ></v-text-field>
-      </v-col>
-      <v-col cols="2">
-        <v-text-field
-          ref="name"
-          label="Saldo Pendiente"
-          v-model="credit.balance"
-          outlined
-        ></v-text-field>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="2">
-        <v-text-field
-          ref="name"
-          label="Dias Retraso"
-          v-model="delayDays"
-          outlined
-        ></v-text-field>
-      </v-col>
-      <v-col cols="2">
-        <v-text-field
-          ref="name"
-          label="Total Abonos"
-          v-model="credit.total_paid"
-          outlined
-        ></v-text-field>
-      </v-col>
-      <v-col cols="2">
-        <v-text-field
-          ref="name"
-          label="Valor Abono*"
-          v-model="postPaid.value"
-          v-on:keyup.enter="savePaid()"
-          outlined
-        ></v-text-field>
-      </v-col>
-      <v-col cols="2">
-        <v-btn depressed rounded color="primary" @click="savePaid()">
-          <v-icon left dark> file_download_done </v-icon>
-          GUARDAR
-        </v-btn>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="7" align="center">
-        <v-btn
-          class="mx-2"
-          :disabled="!previous"
-          @click="getCurrentCredit(0)"
-          fab
-          dark
-          small
-          color="primary"
-        >
-          <v-icon dark> arrow_back </v-icon>
-        </v-btn>
-        <v-btn
-          class="mx-2"
-          :disabled="!next"
-          @click="getCurrentCredit(1)"
-          fab
-          dark
-          small
-          color="primary"
-        >
-          <v-icon dark> arrow_forward </v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
+    <div v-if="!balance">
+      <v-row>
+        <v-col cols="2">
+          <v-autocomplete
+            @change="viewDate()"
+            :items="items"
+            return-object
+            label="Cobro*"
+            item-value="value"
+            item-text="detail"
+            no-data-text="Cobro no registrado"
+            :menu-props="{ maxHeight: 100 }"
+            v-model="paiment"
+            outlined
+          ></v-autocomplete>
+        </v-col>
+        <v-col cols="2" v-if="stateDate">
+          <v-menu
+            ref="menu"
+            v-model="menu"
+            :close-on-content-click="false"
+            :return-value.sync="postPaid.date"
+            transition="scale-transition"
+            offset-y
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="postPaid.date"
+                label="Fecha*"
+                persistent-hint
+                readonly
+                v-bind="attrs"
+                v-on="on"
+                outlined
+              ></v-text-field>
+            </template>
+            <v-date-picker v-model="postPaid.date" no-title scrollable>
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="menu = false">
+                Cancelar
+              </v-btn>
+              <v-btn
+                text
+                color="primary"
+                @click="
+                  $refs.menu.save(postPaid.date);
+                  getCreditInitial(paiment);
+                "
+              >
+                Seleccionar
+              </v-btn>
+            </v-date-picker>
+          </v-menu>
+        </v-col>
+        <v-col cols="4">
+          <v-text-field
+            ref="name"
+            label="Cliente"
+            v-model="credit.name"
+            outlined
+          ></v-text-field>
+        </v-col>
+        <v-col cols="2" align="center">
+          <v-btn
+            class="mx-2"
+            :disabled="!previous"
+            @click="getCurrentCredit(0)"
+            fab
+            dark
+            small
+            color="primary"
+          >
+            <v-icon dark> arrow_back </v-icon>
+          </v-btn>
+          <v-btn
+            class="mx-2"
+            :disabled="!next"
+            @click="getCurrentCredit(1)"
+            fab
+            dark
+            small
+            color="primary"
+          >
+            <v-icon dark> arrow_forward </v-icon>
+          </v-btn>
+        </v-col>
+        <v-col cols="2" align="center">
+          <v-btn
+            v-if="add"
+            @click="dialog2 = !dialog2"
+            class="mx-2"
+            fab
+            dark
+            small
+            color="primary"
+          >
+            <v-icon dark> person_add_alt_1 </v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="2">
+          <v-text-field
+            ref="name"
+            label="Total Pago"
+            v-model="credit.total"
+            outlined
+          ></v-text-field>
+        </v-col>
+        <v-col cols="2">
+          <v-text-field
+            ref="name"
+            label="Valor Prestamo"
+            v-model="credit.value"
+            outlined
+          ></v-text-field>
+        </v-col>
+        <v-col cols="2">
+          <v-text-field
+            ref="name"
+            label="Saldo Pendiente"
+            v-model="credit.balance"
+            outlined
+          ></v-text-field>
+        </v-col>
+        <v-col cols="2">
+          <v-text-field
+            ref="name"
+            label="Dias Retraso"
+            v-model="delayDays"
+            outlined
+          ></v-text-field>
+        </v-col>
+        <v-col cols="2">
+          <v-text-field
+            ref="name"
+            label="Total Abonos"
+            v-model="credit.total_paid"
+            outlined
+          ></v-text-field>
+        </v-col>
+        <v-col cols="2">
+          <v-text-field
+            ref="name"
+            label="Valor Abono*"
+            v-model="postPaid.value"
+            v-on:keyup.enter="savePaid()"
+            outlined
+            append-icon="file_download_done"
+            @click:append="savePaid()"
+          ></v-text-field>
+        </v-col>
+      </v-row>
+    </div>
+    <div v-if="balance">
+      <v-row>
+        <v-col cols="2">
+          <v-text-field
+            v-model="totalCredits"
+            ref="name"
+            label="Total Prestamos"
+            outlined
+          ></v-text-field>
+        </v-col>
+        <v-col cols="2">
+          <v-text-field
+            v-model="totalPaids"
+            ref="name"
+            label="Total Abonos"
+            outlined
+          ></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="2">
+          <v-text-field
+            ref="name"
+            label="Base"
+            v-model="postBalance.base"
+            outlined
+          ></v-text-field>
+        </v-col>
+        <v-col cols="2">
+          <v-text-field
+            ref="name"
+            label="Gastos"
+            v-model="postBalance.bills"
+            v-on:keyup="calculateDelivery()"
+            outlined
+          ></v-text-field>
+        </v-col>
+        <v-col cols="2">
+          <v-text-field
+            ref="name"
+            label="Entrega"
+            v-model="postBalance.delivery"
+            outlined
+            v-on:keyup.enter="saveBalance()"
+            append-icon="file_download_done"
+            @click:append="saveBalance()"
+          ></v-text-field>
+        </v-col>
+      </v-row>
+    </div>
     <v-row justify="center">
       <v-dialog v-model="dialog" persistent max-width="300">
         <v-card>
@@ -198,7 +242,20 @@ const shortid = require("shortid");
 export default {
   data() {
     return {
-      stateDate: false,
+      balance: false,
+      totalCredits: "",
+      totalPaids: "",
+      postBalance: {
+        payment_id: "",
+        date: "",
+        total_credits: "",
+        total_paids: "",
+        base: "",
+        bills: "",
+        delivery: "",
+      },
+
+      stateDate: true,
       add: false,
       next: false,
       previous: false,
@@ -271,24 +328,26 @@ export default {
       }
     },
     async savePaid() {
+      let paid = this.postPaid.value * 1000;
+      let balance = this.credit.balance.replace(/\./g, "");
       if (this.postPaid.date === "" || this.postPaid.paid === "") {
         this.dialog = true;
       } else {
         this.setValuePostPaid();
         await axios
           .post("api/credits/paid", this.postPaid)
-          .then(async (result) => {
+          .then((result) => {
             if (result) {
-              let x = this.postPaid.value * 1000;
-              if (x >= this.credit.balance) {
-                await this.updatePrevious(this.credit.previous);
-                await this.updateNext(this.credit.next);
-                await this.inactivateCredit(this.credit.id);
+              if (paid >= balance) {
+                this.updatePrevious(this.credit.previous);
+                this.updateNext(this.credit.next);
+                this.inactivateCredit(this.credit.id);
               }
               if (this.credit.next === "0") {
-                location.reload();
+                this.balance = !this.balance;
+                this.getDailyBalance();
               } else {
-                await this.getCurrentCredit(1);
+                this.getCurrentCredit(1);
               }
             }
           });
@@ -335,8 +394,8 @@ export default {
     closeModalCredit() {
       this.dialog2 = false;
     },
-    calculateDelay(credit) {      
-      let newCredit = []
+    calculateDelay(credit) {
+      let newCredit = [];
       credit.forEach((item) => {
         newCredit.push({
           balance: this.convert(item.balance),
@@ -351,7 +410,7 @@ export default {
           value: this.convert(item.value),
         });
       });
-      this.credit = newCredit[0]
+      this.credit = newCredit[0];
       let limitDate = moment(this.credit.date)
         .add(this.credit.mode, "d")
         .format("YYYY-MM-DD");
@@ -359,6 +418,45 @@ export default {
       this.delayDays =
         currentDate > limitDate ? moment(currentDate).diff(limitDate, "d") : 0;
     },
+
+    async getDailyBalance() {
+      let paymentId = this.paiment.id;
+      let dataCredits = await axios.get(
+        `api/credits/totalCredits/paymentId/${paymentId}/date/${this.postPaid.date}`
+      );
+      this.totalCredits = this.convert(
+        await dataCredits.data.totalCredits[0].total
+      );
+
+      let dataPaids = await axios.get(
+        `api/credits/totalPaids/paymentId/${paymentId}/date/${this.postPaid.date}`
+      );
+      this.totalPaids = this.convert(await dataPaids.data.totalPaids[0].total);
+    },
+    calculateDelivery() {
+      this.postBalance.delivery =
+        this.postBalance.total_paids +
+        this.postBalance.base * 1000 -
+        (this.postBalance.total_credits + this.postBalance.bills * 1000);
+    },
+    async saveBalance() {
+      this.setValuePostBalance();
+      await axios
+        .post("api/credits/paid/saveDailyBalance", this.postBalance)
+        .then(async (result) => {
+          if (result) {
+            location.reload();
+          }
+        });
+    },
+    setValuePostBalance() {
+      this.postBalance.id = shortid.generate();
+      this.postBalance.payment_id = this.paiment.id;
+      this.postBalance.date = this.postPaid.date;
+      this.postBalance.total_credits = this.totalCredits.replace(/\./g, "");
+      this.postBalance.total_paids = this.totalPaids.replace(/\./g, "");
+    },
+
     convert(num) {
       if (!isNaN(num)) {
         num = num

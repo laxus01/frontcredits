@@ -61,11 +61,6 @@ export default {
           to: "/create-payment",
         },
         {
-          action: "assignment",
-          title: "Balance Diario",
-          to: "/balance-payment",
-        },
-        {
           action: "edit_attributes",
           title: "Modificaciones",
           items: [

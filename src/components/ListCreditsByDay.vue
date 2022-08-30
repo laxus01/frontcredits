@@ -40,6 +40,7 @@
                 readonly
                 v-bind="attrs"
                 v-on="on"
+                outlined
               ></v-text-field>
             </template>
             <v-date-picker v-model="date2" no-title scrollable>
@@ -76,7 +77,7 @@
         <v-dialog v-model="dialog" max-width="500px">
           <v-card>
             <v-card-title>
-              <span class="text-h5">Modificar Pago</span>
+              <span class="text-h5">Modificar Credito</span>
             </v-card-title>
 
             <v-card-text>
@@ -242,6 +243,8 @@ export default {
       credits.forEach((credits) => {
         this.desserts.push({
           id: credits.id,
+          previous: credits.previous,
+          next: credits.next,
           name: credits.name,
           value: this.convert(credits.value),
           date: credits.date,
@@ -283,10 +286,9 @@ export default {
       }
     },
     async deleteCredit(editedItem) {
-          console.log(editedItem)
       axios
         .delete(`api/credits/${editedItem.id}`)
-        .then((res) => {
+        .then(() => {
           this.getCreditsByDay()
           this.updatePrevious(editedItem)
           this.updateNext(editedItem)
