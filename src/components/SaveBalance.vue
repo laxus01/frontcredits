@@ -1,8 +1,9 @@
 <template>
   <v-container>
-    <v-row>
+    <!-- <v-row>
       <v-col cols="2">
         <v-autocomplete
+          @change="viewDate()"
           :items="items"
           return-object
           label="Cobro*"
@@ -11,9 +12,10 @@
           no-data-text="Cobro no registrado"
           :menu-props="{ maxHeight: 100 }"
           v-model="paiment"
+          outlined
         ></v-autocomplete>
       </v-col>
-      <v-col v-if="paiment" cols="2">
+      <v-col v-if="stateDate" cols="2">
         <v-menu
           ref="menu"
           v-model="menu"
@@ -31,6 +33,7 @@
               readonly
               v-bind="attrs"
               v-on="on"
+              outlined
             ></v-text-field>
           </template>
           <v-date-picker v-model="postBalance.date" no-title scrollable>
@@ -49,51 +52,53 @@
           </v-date-picker>
         </v-menu>
       </v-col>
-    </v-row>
+    </v-row> -->
     <v-row>
-      <v-col cols="3">
+      <v-col cols="2">
         <v-text-field
           v-model="totalCredits"
           ref="name"
           label="Total Prestamos"
+          outlined
         ></v-text-field>
       </v-col>
-      <v-col cols="3">
+      <v-col cols="2">
         <v-text-field
           v-model="totalPaids"
           ref="name"
           label="Total Abonos"
+          outlined
         ></v-text-field>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="3">
+    <v-row> 
+      <v-col cols="2">
         <v-text-field
           ref="name"
           label="Base"
           v-model="postBalance.base"
+          outlined
         ></v-text-field>
       </v-col>
-      <v-col cols="3">
+      <v-col cols="2">
         <v-text-field
           ref="name"
           label="Gastos"
           v-model="postBalance.bills"
           v-on:keyup="calculateDelivery()"
+          outlined
         ></v-text-field>
       </v-col>
-      <v-col cols="3">
+      <v-col cols="2">
         <v-text-field
           ref="name"
           label="Entrega"
           v-model="postBalance.delivery"
+          outlined
+          v-on:keyup.enter="saveBalance()"          
+          append-icon="file_download_done"
+          @click:append="saveBalance()"
         ></v-text-field>
-      </v-col>
-      <v-col cols="2">
-        <v-btn depressed rounded color="primary" @click="saveBalance()">
-          <v-icon left dark> file_download_done </v-icon>
-          GUARDAR
-        </v-btn>
       </v-col>
     </v-row>
     <v-row justify="center">
@@ -121,7 +126,8 @@ const shortid = require("shortid")
 export default {
   data() {
     return {
-      paiment: "",
+      stateDate: true,
+      paiment: [],
       menu: false,
       dialog: false,
       text: true,
@@ -139,19 +145,25 @@ export default {
       totalPaids: "",
     }
   },
+  props: {
+    paymentId: "",
+  },
   methods: {
+    viewDate() {
+      this.stateDate = true;
+    },
     async getPayments() {
-      let data = await axios.get("payments")
+      let data = await axios.get("api/payments")
       this.items = await data.data.desserts
     },
     async getDailyBalance() {
-      let paymentId = this.items[0].id
+      let paymentId = this.paiment.id
       let dataCredits = await axios.get(
-        `credits/totalCredits/paymentId/${paymentId}/date/${this.postBalance.date}`
+        `api/credits/totalCredits/paymentId/${paymentId}/date/${this.postBalance.date}`
       )
       this.totalCredits = this.convert(await dataCredits.data.totalCredits[0].total)
       let dataPaids = await axios.get(
-        `credits/totalPaids/paymentId/${paymentId}/date/${this.postBalance.date}`
+        `api/credits/totalPaids/paymentId/${paymentId}/date/${this.postBalance.date}`
       )
       this.totalPaids = this.convert(await dataPaids.data.totalPaids[0].total)
     },
@@ -168,7 +180,7 @@ export default {
       } else {
         await this.setValuePostBalance()
         await axios
-          .post("credits/paid/saveDailyBalance", this.postBalance)
+          .post("api/credits/paid/saveDailyBalance", this.postBalance)
           .then(async (result) => {
             if (result) {
               location.reload();
@@ -179,8 +191,8 @@ export default {
     setValuePostBalance() {
       this.postBalance.id = shortid.generate()
       this.postBalance.payment_id = this.paiment.id
-      this.postBalance.total_credits = this.totalCredits
-      this.postBalance.total_paids = this.totalPaids
+      this.postBalance.total_credits = this.totalCredits.replace(/\./g, '')
+      this.postBalance.total_paids = this.totalPaids.replace(/\./g, '')
     },
     convert(num) {
       if(!isNaN(num)){
@@ -191,7 +203,7 @@ export default {
     },
   },
   created() {
-    this.getPayments()
+    //this.getPayments()
   },
 }
 </script>

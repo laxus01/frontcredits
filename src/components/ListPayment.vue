@@ -18,7 +18,14 @@
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn rounded color="blue darken-3" dark class="mb-2" v-bind="attrs" v-on="on">
+            <v-btn
+              rounded
+              color="blue darken-3"
+              dark
+              class="mb-2"
+              v-bind="attrs"
+              v-on="on"
+            >
               Registrar
             </v-btn>
           </template>
@@ -94,7 +101,9 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close"> Cancelar </v-btn>
+              <v-btn color="blue darken-1" text @click="close">
+                Cancelar
+              </v-btn>
               <v-btn color="blue darken-1" text @click="save"> Guardar </v-btn>
             </v-card-actions>
           </v-card>
@@ -128,7 +137,8 @@
 
 <script>
 const shortid = require("shortid");
-import { mapState, mapActions } from "vuex";
+import axios from "axios";
+//import { mapState, mapActions } from "vuex";
 
 export default {
   data: () => ({
@@ -137,6 +147,7 @@ export default {
     search: "",
     dialog: false,
     dialogDelete: false,
+    desserts: [],
     headers: [
       {
         text: "Cobro",
@@ -157,7 +168,6 @@ export default {
     },
   }),
   computed: {
-    ...mapState(["desserts"]),
     formTitle() {
       return this.editedIndex === -1 ? "Nuevo Cobro" : "Editar Cobro";
     },
@@ -172,16 +182,20 @@ export default {
     },
   },
 
-  created() {
-    this.initialize();
-  },
-
   methods: {
-    ...mapActions(["setPayment"]),
-    ...mapActions(["updatePayment"]),
-    ...mapActions(["deletePayment"]),
-    initialize() {},
-
+    async getPayments() {
+      let data = await axios.get("api/payments");
+      let payments = await data.data.desserts;
+      this.desserts = [];
+      payments.forEach((payments) => {
+        this.desserts.push({
+          date: payments.date,
+          detail: payments.detail,
+          id: payments.id,
+          initial_value: this.convert(payments.initial_value),
+        });
+      });
+    },
     editItem(item) {
       this.editedIndex = this.desserts.indexOf(item);
       this.editedItem = Object.assign({}, item);
@@ -219,16 +233,69 @@ export default {
       if (this.editedIndex > -1) {
         this.updatePayment(this.editedItem);
       } else {
-        this.editedItem.id = shortid.generate();
-        this.setPayment(this.editedItem);
+        const id = shortid.generate();
+        this.setPayment(this.editedItem, id);
       }
       this.close();
     },
 
     handleClick(value) {
-      this.$router.push(`create-credit/${value.id}`)
-    }
-    
+      this.$router.push(`create-credit/${value.id}`);
+    },
+    async deletePayment(editedItem) {
+      axios
+        .put(`api/payments/inactivate/${editedItem.id}`)
+        .then(() => {
+          this.getPayments();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    async updatePayment(editedItem) {
+      axios
+        .put(`api/payments/update/${editedItem.id}`, {
+          date: editedItem.date,
+          detail: editedItem.detail,
+          initial_value: editedItem.initial_value.replace(/\./g, ''),
+        })
+        .then(() => {
+          this.getPayments();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    async setPayment(editedItem, id) {
+      axios
+        .post(`api/payments`, {
+          id: id,
+          date: editedItem.date,
+          detail: editedItem.detail,
+          initial_value: editedItem.initial_value,
+        })
+        .then(() => {
+          this.getPayments();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    convert(num) {
+      if (!isNaN(num)) {
+        num = num
+          .toString()
+          .split("")
+          .reverse()
+          .join("")
+          .replace(/(?=\d*\.?)(\d{3})/g, "$1.");
+        num = num.split("").reverse().join("").replace(/^[\.]/, "");
+        return num;
+      }
+    },
+  },
+  created() {
+    this.getPayments();
   },
 };
 </script>

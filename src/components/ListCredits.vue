@@ -53,9 +53,9 @@
           </v-dialog>
         </v-toolbar>
       </template>
-      <template v-slot:[`item.actions`]="{ item }">
+      <!-- <template v-slot:[`item.actions`]="{ item }">
         <v-icon small @click="deleteItem(item)"> delete </v-icon>
-      </template>
+      </template> -->
     </v-data-table>
   </v-container>
 </template>
@@ -81,7 +81,6 @@ export default {
         { text: "Cliente", align: "start", value: "name" },
         { text: "Total", value: "total" },
         { text: "Fecha", value: "date" },
-        { text: "Acción", value: "actions", sortable: false },
       ],
     };
   },
@@ -93,12 +92,12 @@ export default {
   },
   methods: {
     async getCredits() {
-      let data = await axios.get(`credits/${this.payment_id}`);
+      let data = await axios.get(`api/credits/${this.payment_id}`);
       this.credits = await data.data.credits;
     },
     async deleteCredit(creditId) {
       await axios
-        .delete(`credits/${creditId}`)
+        .delete(`api/credits/${creditId}`)
         .then((result) => {
           if (result) {
             this.getCredits();
