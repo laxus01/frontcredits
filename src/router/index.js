@@ -11,6 +11,7 @@ import EditCredits from '../views/EditCredits'
 import ActualState from '../views/ActualState'
 import CreditsExpired from '../views/CreditsExpired'
 import GraphicState from '../views/GraphicState'
+import DailyBalance from '../views/DailyBalance'
 
 
 Vue.use(VueRouter)
@@ -74,6 +75,15 @@ const routes = [
         name: 'EditCredits',    
         props: true,
         component: EditCredits,
+        meta: {
+          requiresAuth: true,
+        },  
+      },
+      {
+        path: '/daily-balance',
+        name: 'DailyBalance',    
+        props: true,
+        component: DailyBalance,
         meta: {
           requiresAuth: true,
         },  

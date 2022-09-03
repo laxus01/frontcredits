@@ -49,16 +49,22 @@ export default {
   name: "Menu",
   data() {
     return {
-      items: [
-        {
-          action: "payments",
-          title: "Pagos",
-          to: "/register-paid",
-        },
+      items: [        
         {
           action: "paid",
-          title: "Mis Cobros",
-          to: "/create-payment",
+          title: "Registros",
+          items: [
+            {
+              action: "paid",
+              title: "Pagos",
+              to: "/register-paid",
+            },
+            {
+              action: "paid",
+              title: "Mis Cobros",
+              to: "/create-payment",
+            },
+          ],
         },
         {
           action: "edit_attributes",
@@ -84,7 +90,13 @@ export default {
               title: "Estado Actual",
               action: "auto_awesome_motion",
               to: "/actual-state",
-            },{
+            },
+            {
+              title: "Balance Diario",
+              action: "auto_awesome_motion",
+              to: "/daily-balance",
+            },
+            {
               title: "Creditos Vencidos",
               action: "auto_awesome_motion",
               to: "/credits-expired",
