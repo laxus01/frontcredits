@@ -9,10 +9,7 @@ import Filters from './helpers/helper'
 Vue.config.productionTip = false
 Vue.use(Filters)
 
-
-//base url
 axios.defaults.baseURL = 'https://backcredits-production.up.railway.app/'
-//base url
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
