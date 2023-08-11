@@ -2,7 +2,7 @@
   <v-container>
     <v-card class="cards" elevation="5">
       <v-banner color="blue darken-3" dark elevation="7" icon="$mdiAccount"
-        >Creditos Vencidos </v-banner
+        >Creditos vencidos </v-banner
       >
     <DetailGraphicState class="top"/>
     </v-card>

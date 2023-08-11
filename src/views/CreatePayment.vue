@@ -2,7 +2,7 @@
   <v-container>
     <v-card class="cards" elevation="5">
       <v-banner color="blue darken-3" dark elevation="7" icon="$mdiAccount"
-        >Mis Cobros</v-banner
+        >Mis cobros</v-banner
       >
     <ListPayment class="top"/>
     </v-card>

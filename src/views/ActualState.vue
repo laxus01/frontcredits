@@ -2,7 +2,7 @@
   <v-container>
     <v-card class="cards" elevation="5">
       <v-banner color="blue darken-3" dark elevation="7" icon="$mdiAccount"
-        >Estado Actual</v-banner
+        >Estado actual</v-banner
       >
     <DetailState class="top"/>
     </v-card>
